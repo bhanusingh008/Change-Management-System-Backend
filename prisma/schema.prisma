@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int           @id @default(autoincrement())
+  email  String           @unique
+  password  String
+  role      Int        @default(1)
+}
+
+model ChangeTicket {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String
+  priority        Priority // Using an enum for better validation
+  type            ChangeType // Using an enum for better validation
+  affectedSystems String
+  status          TicketStatus @default(Pending) // Using an enum for better validation
+  createdById     Int
+  creatorRole     Int
+  approvedById    Int?
+  createdAt       DateTime @default(now()) // Optional: Track creation time
+  updatedAt       DateTime @updatedAt // Optional: Track last update time
+}
+
+// Enums for better validation and clarity
+enum Priority {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum ChangeType {
+  Standard
+  Emergency
+  Major
+  Minor
+}
+
+enum TicketStatus {
+  Pending
+  Approved
+  InProgress
+  Completed
+  Rejected
+}
+
